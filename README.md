@@ -1,0 +1,2 @@
+# anhorn-tb
+Développement d'un modèle simple (1D) permettant la détection et la quantification de permafrost pro-glaciaire après le retrait d'un glacier. Le but (provisoire) et d'estimer la faisabilité d'un développement d'un programme plus performant pouvant être appliqué au domaine de l'hydro-électricité dans les Alpes. Ce répertoire contient aussi la phase d'apprentissage en plus du projet en lui-même
