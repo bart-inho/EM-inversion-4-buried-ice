@@ -106,6 +106,7 @@ initial_model = pg.cat(thk_inv, res_inv)  # mise en commun du modèle
 
 
 # Paramètres d'inversion -> non uniqueness des résultats
+
 fEM_inv = pg.core.FDEM1dModelling(nLayer_inv, freq, coilspacing)
 fEM_inv.region(0).setTransModel(transThk)
 fEM_inv.region(1).setTransModel(transRes)
