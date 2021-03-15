@@ -38,16 +38,17 @@ from SimPEG.electromagnetics import frequency_domain as FDEM
 
 start = time.perf_counter()
 
-def inv_2d(sigma_deep):
+def inv_2d(betaratio):
 
     # Define the survey and model parameters
-    sigma_surface = 10e-3
-    sigma_air = 1e-8
-    
+    sigma_tills = 1.1e-4 # moraine conductivity
+    sigma_burice = 1.25e-6 # burried ice conductivity 
+    sigma_air = 1e-8 # Air conductivity
+
     coil_separations = [0.32, 0.71, 1.18]
-    freq = 30e3
+    freq = 30e5
     
-    print("skin_depth: {:1.2f}m".format(500 / np.sqrt(sigma_deep * freq)))
+    print("skin_depth: {:1.2f}m".format(500 / np.sqrt(sigma_tills * freq)))
     
     
     ###############################################################################
@@ -159,9 +160,11 @@ def inv_2d(sigma_deep):
     #
     # Create our true model which we will use to generate synthetic data for
     
-    m_true = np.log(sigma_deep) * np.ones(inversion_mesh.nC)
-    interface_depth = interface(inversion_mesh.gridCC[:, 0])
-    m_true[inversion_mesh.gridCC[:, 1] > interface_depth] = np.log(sigma_surface)
+    m_true = np.log(sigma_tills) * np.ones(inversion_mesh.nC) # Création de la grille 1620
+    interface_depth = interface(inversion_mesh.gridCC[:, 0]) # 
+    m_true[inversion_mesh.gridCC[:, 1] < interface_depth*2] = np.log(sigma_burice)
+    m_true[:900] = np.log(sigma_tills)
+    m_true[1500:] = np.log(sigma_air)
     
     fig, ax = plt.subplots(1, 1)
     cb = plt.colorbar(inversion_mesh.plotImage(m_true, ax=ax, grid=True)[0], ax=ax)
@@ -221,7 +224,7 @@ def inv_2d(sigma_deep):
     t = time.time()
     
     data = prob.make_synthetic_data(
-        m_true, relative_error=0.05, noise_floor=1e-11, add_noise=False
+        m_true, relative_error=0.05, noise_floor=1e-11, add_noise=True
     )
     
     dclean = data.dclean
@@ -282,12 +285,13 @@ def inv_2d(sigma_deep):
     # the regularization. Here, we use a fixed beta, but could alternatively
     # employ a beta-cooling schedule using :class:`SimPEG.directives.BetaSchedule`
     
+
     dmisfit = data_misfit.L2DataMisfit(simulation=prob, data=data)
     reg = regularization.Simple(inversion_mesh)
-    opt = optimization.InexactGaussNewton(maxIterCG=1, remember="xc")
+    opt = optimization.InexactGaussNewton(maxIterCG=10, remember="xc")
     invProb = inverse_problem.BaseInvProblem(dmisfit, reg, opt)
     
-    betaest = directives.BetaEstimate_ByEig(beta0_ratio=0.25)
+    betaest = directives.BetaEstimate_ByEig(beta0_ratio=0.1)
     target = directives.TargetMisfit()
     
     directiveList = [betaest, target]
@@ -301,7 +305,8 @@ def inv_2d(sigma_deep):
     #
     # We start from a half-space equal to the deep conductivity.
     
-    m0 = np.log(sigma_deep) * np.ones(inversion_mesh.nC)
+    m0 = np.log(sigma_burice) * np.ones(inversion_mesh.nC)
+    m0[1450:] = np.log(sigma_air)
     
     t = time.time()
     mrec = inv.run(m0)
@@ -324,7 +329,7 @@ def inv_2d(sigma_deep):
     fig, ax = plt.subplots(1, 2, figsize=(12, 5))
     
     # put both plots on the same colorbar
-    clim = np.r_[np.log(sigma_surface), np.log(sigma_deep)]
+    clim = np.r_[np.log(sigma_air), np.log(sigma_tills)]
     
     # recovered model
     cb = plt.colorbar(inversion_mesh.plotImage(mrec, ax=ax[0], clim=clim)[0], ax=ax[0],)
@@ -349,7 +354,7 @@ def inv_2d(sigma_deep):
 
 if __name__ == '__main__':
     with Pool(8) as p:
-        print(p.map(inv_2d, [5e-3, 3e-3, 4e-3]))
+        print(p.map(inv_2d, [0.01, 0.1, 0.25]))
 
 finish = time.perf_counter()
 
