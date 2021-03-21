@@ -9,7 +9,7 @@ depth = 30; % depth
 resmap = ones(30, 50);
 sig1 = 1e-2;
 sig2 = 1e-3;
-sig3 = 2e-3;
+sig3 = 5e-3;
 resmap(1:end,1:end) = sig1;
 resmap(10:20,1:end) = sig2;
 resmap(20:end,1:end) = sig3;
@@ -72,8 +72,8 @@ x = resEM';
 y = centroid;
 
 for i = 1:length(x)
-    x(i) = x(i) + randn(1)*1e-5  ; % no noise
-end
+    x(i) = x(i) + randn(1)*5e-4 ;
+end % noise
 
 % hold on
 % plot(x, centroid, 'x')
@@ -81,31 +81,32 @@ end
 % hold off
 
 % setting up inversion functions
-k = 0:1:4;
+k = 0:1:10;
 G = zeros(length(y), length(k));
 G(:, :) = y(:).^repmat(k, length(y), 1);
-beta = (G'*G).\1*(G'*x);
+beta = inv(G'*G)*(G'*x);
+
 y1=zeros(length(y), 1);
 
 % polynomial regression
 for i = 1:length(k)
    y1(:) = y1(:) + beta(i)*y(:).^k(i);
-end
+end 
 
 % adding error
-er = y1;
-for i = 1:length(er)
-    er(i) = er(i) + randn(1)*1e-4  ; % noise
-end
-y1 = y1 - er;
+% er = y1;
+% for i = 1:length(er)
+%     er(i) = er(i) + randn(1)*1e-4  ; % noise
+% end
 
 % plot
 inversion = figure(3);
 hold on
-plot(x, y, 'x')
+plot(x, y)
 plot(y1, y, 'r')
-xlim([-0.005 0.012])
+xlim([-0.001 0.015])
 ylim([-5 55])
+legend('m0', 'homemade inversion', 'location', 'northwest')
 hold off
 saveas(inversion, 'inversion_fig.png')
 
@@ -114,7 +115,7 @@ saveas(inversion, 'inversion_fig.png')
 % /////////////////////////////////
 
 x = centroid';
-y = sig1*(x<20) + sig2*(x>=20 & x < 30) + sig3*(x >= 30);
+y = sig3*(x<20) + sig2*(x>=20 & x < 30) + sig1*(x >= 30);
 
 for i = 1:length(y)
     y(i) = y(i) + randn(1)*5e-4  ; % noise
@@ -135,6 +136,8 @@ hold on
 plot(y, x)
 plot(yfit_SVM, x)
 plot(yfit_GMR, x)
+xlim([-0.001 0.015])
+ylim([-5 55])
 legend('m0','SVM', 'GMR')
 xlabel('conductivity \sigma')
 ylabel('centroids')
