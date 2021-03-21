@@ -3,7 +3,7 @@ clear all, close all, clc,
 % //////////////////////////////////////////
 % FORWARD MODEL
 % //////////////////////////////////////////
-
+tic
 % building initial conductivity model
 depth = 30; % depth
 resmap = ones(30, 50);
@@ -81,9 +81,10 @@ end % noise
 % hold off
 
 % setting up inversion functions
-k = 0:1:10;
+k = 0:1:11;
 G = zeros(length(y), length(k));
 G(:, :) = y(:).^repmat(k, length(y), 1);
+
 beta = inv(G'*G)*(G'*x);
 
 y1=zeros(length(y), 1);
@@ -107,12 +108,19 @@ plot(y1, y, 'r')
 xlim([-0.001 0.015])
 ylim([-5 55])
 legend('m0', 'homemade inversion', 'location', 'northwest')
+xlabel('conductivity \sigma')
+ylabel('centroid')
+title('Homemade inversion')
 hold off
 saveas(inversion, 'inversion_fig.png')
+
+toc
 
 % /////////////////////////////////
 % test using toolbox
 % /////////////////////////////////
+
+tic
 
 x = centroid';
 y = sig3*(x<20) + sig2*(x>=20 & x < 30) + sig1*(x >= 30);
@@ -131,6 +139,7 @@ model_GMR = fitrgp(x,y,'KernelFunction','squaredexponential',...
 yfit_GMR = predict(model_GMR,x);
 yfit_SVM = predict(model_SVM,x);
 
+% plot
 test = figure(4);
 hold on
 plot(y, x)
@@ -141,9 +150,11 @@ ylim([-5 55])
 legend('m0','SVM', 'GMR')
 xlabel('conductivity \sigma')
 ylabel('centroids')
+title('Using Machine Learning ToolBox')
 hold off
-
 saveas(test, 'test_fig.png')
+
+toc
 
 % /////////////////////////////////
 % functions 
@@ -152,7 +163,6 @@ saveas(test, 'test_fig.png')
 function Rh = rh(prof, coilspacing)
     Rh = 1./((4.*(prof./coilspacing).^2+1.^(1/2)-2.*(prof./coilspacing)));
 end
-
 function Rv = rv(prof, coilspacing)
     Rv = 1./((4.*(prof./coilspacing).^2+1.^(1/2)));
 end
