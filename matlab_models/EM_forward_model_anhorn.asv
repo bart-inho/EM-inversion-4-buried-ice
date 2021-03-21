@@ -100,14 +100,14 @@ end
 y1 = y1 - er;
 
 % plot
-inversion = figure(3);
+figure(3)
 hold on
 plot(x, y, 'x')
 plot(y1, y, 'r')
 xlim([-0.005 0.012])
 ylim([-5 55])
 hold off
-saveas(inversion, 'inversion_fig.png')
+saveas(test, 'test_fig.png')
 
 % /////////////////////////////////
 % test using toolbox
