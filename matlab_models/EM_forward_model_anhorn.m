@@ -61,18 +61,24 @@ end
 % giving sigma_a
 % ///////////////////////////////////////
 
-coilspace = [3 4 5 6 7 8 9 10 12 15 20]; % coil spacing [m]
+coilspace = 1; % coil spacing [m]
 z1 = 10; z2 = 20; % depth [m]
 
 sigma_a_h = sig1*(1-rh(z1, coilspace)) + sig2*(rh(z1, coilspace) - rh(z2, coilspace)) + sig3*rh(z2, coilspace);
 % disp('horizontal sigma a = '); disp(sigma_a_h);
 sigma_a_v = sig1*(1-rv(z1, coilspace)) + sig2*(rv(z1, coilspace) - rv(z2, coilspace)) + sig3*rv(z2, coilspace);
-% disp('vertical sigma a = '); disp(sigma_a_v);
+disp('vertical sigma a = '); disp(sigma_a_v);
 sigma_a_tot = [sigma_a_h sigma_a_v];
-% disp('total sigma a = '); disp(sigma_a_tot)
+disp('total sigma a = '); disp(sigma_a_tot)
+
+% /////////////////////////////////////////////
+% Inversion using sigma_a
+% /////////////////////////////////////////////
+
+% to finish
 
 % //////////////////////////////////////////////
-% Inversion
+% Polynomial regression
 % //////////////////////////////////////////////
 
 % setting up x and y
@@ -103,7 +109,7 @@ plot(x, y)
 plot(y1, y, 'r')
 % xlim([-0.001 0.015])
 % ylim([-5 55])
-legend('m0', 'homemade inversion', 'location', 'northwest')
+legend('m0', 'homemade regression', 'location', 'northwest')
 xlabel('conductivity \sigma')
 ylabel('depth [m]')
 title('Homemade inversion')
@@ -173,6 +179,7 @@ yfit_SVM = predict(model_SVM,x);
 
 function Rh = rh(prof, coilspacing)
     Rh = 1./((4.*(prof./coilspacing).^2+1.^(1/2)-2.*(prof./coilspacing)));
+    disp(Rh)
 end
 function Rv = rv(prof, coilspacing)
     Rv = 1./((4.*(prof./coilspacing).^2+1.^(1/2)));
