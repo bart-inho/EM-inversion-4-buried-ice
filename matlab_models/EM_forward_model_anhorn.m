@@ -4,24 +4,31 @@ clear all, close all, clc,
 % FORWARD MODEL
 % //////////////////////////////////////////
 tic
-% building initial conductivity model
-depth = 30; % depth [m]
-distance = 50; % A-B distance [m]
-resmap = ones(depth, distance);
+
+% initial conductivity
 sig1 = 1e-3;
 sig2 = 4e-3;
 sig3 = 3e-3;
+
+% frequency and depth
+freq = 4e5;
+depth = round(500/sqrt(sig1*freq)); % depth [m]
+
+% building inital conductivity model
+distance = 50; % A-B distance [m]
+resmap = ones(depth, distance);
 resmap(1:end,1:end) = sig1;
-resmap(10:20,1:end) = sig2;
-resmap(20:end,1:end) = sig3;
+resmap(round(depth*(1/3)):round(depth*(2/3)),1:end) = sig2;
+resmap(round(depth*(2/3)):end,1:end) = sig3;
 
 % plotting the initial model 
-figure(1)
+initial_model = figure(1);
 pcolor(resmap)
 xlabel('x')
 ylabel('depth')
 title('conductvity model')
 colorbar
+saveas(initial_model, 'initial_model.png')
 
 % one dimension model :
 position = 22; % random x on the 2D model to go in the 1D model
@@ -77,7 +84,7 @@ end % noise
 
 tic
 % setting up inversion functions
-k = 0:1:10;
+k = 0:1:8;
 G = zeros(length(y), length(k));
 G(:, :) = y(:).^repmat(k, length(y), 1);
 beta = inv(G'*G)*(G'*x);
@@ -98,7 +105,7 @@ plot(y1, y, 'r')
 % ylim([-5 55])
 legend('m0', 'homemade inversion', 'location', 'northwest')
 xlabel('conductivity \sigma')
-ylabel('centroid')
+ylabel('depth [m]')
 title('Homemade inversion')
 set(gca, 'YDir','reverse')
 hold off
@@ -108,18 +115,19 @@ saveas(inversion, 'inversion_fig.png')
 % 2D array combining 1D array
 % /////////////////////////////////
 
-measurement_spacing = thickness; % [m]
+measurement_spacing = thkness; % [m]
 terrain_size = distance; % [m]
 dist = ones(1, terrain_size)*measurement_spacing; % 
 
 model2d = dist.*y1 ;
 
-figure(5)
+inversion_2d = figure(5);
 pcolor(model2d)
 xlabel('x [m]')
-ylabel('centroid')
+ylabel('depth [m]')
 title('conductvity model inverted')
 colorbar
+saveas(inversion_2d, 'inversion_2d.png')
 
 % /////////////////////////////////
 toc
