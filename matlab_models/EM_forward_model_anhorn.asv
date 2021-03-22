@@ -6,8 +6,8 @@ clear all, close all, clc,
 tic
 % building initial conductivity model
 depth = 30; % depth [m]
-distance = 50; % A-B distance [m]
-resmap = ones(depth, distance);
+
+resmap = ones(depth, 50);
 sig1 = 1e-3;
 sig2 = 4e-3;
 sig3 = 3e-3;
@@ -87,7 +87,13 @@ y1=zeros(length(y), 1);
 for i = 1:length(k)
    y1(:) = y1(:) + beta(i)*y(:).^k(i);
 end 
+
 toc
+% adding error
+% er = y1;
+% for i = 1:length(er)
+%     er(i) = er(i) + randn(1)*1e-4  ; % noise
+% end
 
 % plot
 inversion = figure(3);
@@ -108,8 +114,8 @@ saveas(inversion, 'inversion_fig.png')
 % 2D array combining 1D array
 % /////////////////////////////////
 
-measurement_spacing = thickness; % [m]
-terrain_size = distance; % [m]
+measurement_spacing = 1; % [m]
+terrain_size = 100; % [m]
 dist = ones(1, terrain_size)*measurement_spacing; % 
 
 model2d = dist.*y1 ;
