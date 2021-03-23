@@ -6,21 +6,20 @@ clear all, close all, clc,
 tic
 
 % initial conductivity
-sig1 = 4e-3;
-sig2 = 2e-3;
-sig3 = 8e-3;
-sig = [sig1; sig2; sig3];
+sig = [4e-3; 2e-3; 8e-3];
 
 % frequency and depth
 freq = 4e5;
-depth = round(500/sqrt(sig1*freq)); % depth [m]
-depth_layer = [round(depth*1/3); round(depth*2/3)];
+depth = round(500/sqrt(sig(1)*freq)); % depth [m]
+
+z = [round(depth*1/3); round(depth*2/3)];
+
 % building inital conductivity model
 distance = 50; % A-B distance [m]
 resmap = ones(depth, distance);
-resmap(1:end,1:end) = sig1;
-resmap(depth_layer(1):depth_layer(2),1:end) = sig2;
-resmap(depth_layer(2):end,1:end) = sig3;
+resmap(1:end,1:end) = sig(1);
+resmap(z(1):z(2),1:end) = sig(2);
+resmap(z(2):end,1:end) = sig(3);
 
 % plotting the initial model 
 initial_model = figure(1);
@@ -71,7 +70,7 @@ hold off
 
 coil = 1;
 ori = 0;
-sigma_a = forwardEM1D(depth_layer, sig, ori, coil);
+sigma_a = forwardEM1D(z, sig, ori, coil);
 disp(sigma_a)
 
 % /////////////////////////////////////////////
