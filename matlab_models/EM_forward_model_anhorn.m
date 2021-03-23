@@ -177,18 +177,16 @@ toc
 % functions 
 % /////////////////////////////////
 
+% -> weight W could be better 
+
 function C = forwardEM1D(ztop, sigma, orient, sep)
     if orient == 1 % 1 = horizontal
         R = ((4.*((ztop./sep).^2)+1).^(1/2))-2.*(ztop./sep);
-        C = sigma(1).*(1-R(1)) + sigma(end).*R(end);
-            for j = 2:length(sigma)-1
-                C = C + sigma(j).*(R(j-1) - R(j));
-            end
     else % 0 = vertical
         R = ((4.*((ztop./sep).^2)+1).^(1/2)).\1;
-        C = sigma(1)*(1-R(1)) + sigma(end)*R(end);
-            for j = 2:length(sigma)-1
-               C = C + sigma(j).*(R(j-1) - R(j));
-            end 
     end
+    C = sigma(1)*(1-R(1)) + sigma(end)*R(end);
+        for j = 2:length(sigma)-1
+           C = C + sigma(j).*(R(j-1) - R(j));
+        end 
 end
