@@ -62,10 +62,13 @@ end
 % giving sigma_a
 % ///////////////////////////////////////
 
+h = [0.5; 1.0];
+res = [20e-3; 2e-3; 20e-3];
+% orient = 0;
 coil = 1;
 ori = 0;
 
-sigma_a = forwardEM1D(depth_layer, sig, ori, coil);
+sigma_a = forwardEM1D(h, res, ori, coil);
 disp(sigma_a)
 
 % /////////////////////////////////////////////
@@ -134,9 +137,9 @@ colorbar
 saveas(inversion_2d, 'inversion_2d.png')
 
 % /////////////////////////////////
-
+toc
 % /////////////////////////////////
-% test regression using toolbox
+% test using toolbox
 % /////////////////////////////////
 
 x = centroid';
@@ -170,8 +173,6 @@ yfit_SVM = predict(model_SVM,x);
 % title('Using Machine Learning ToolBox')
 % hold off
 % saveas(test, 'test_fig.png')
-
-toc
 
 % /////////////////////////////////
 % functions 
