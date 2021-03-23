@@ -50,13 +50,13 @@ for i = centroid(2:end)
 end
 
 % plotting the forward model
-% figure(2)
-% hold on
-% plot(resEM, centroid)
-% ylabel('centroids')
-% xlabel('conductivity \sigma')
-% title('forward model')
-% hold off
+figure(2)
+hold on
+plot(resEM, centroid)
+ylabel('centroids')
+xlabel('conductivity \sigma')
+title('forward model')
+hold off
 
 % /////////////////////////////////////////
 % giving sigma_a
@@ -77,7 +77,7 @@ disp(sigma_a)
 % //////////////////////////////////////////////
 % Polynomial regression
 % //////////////////////////////////////////////
-% without taking sigma_a in count (in progress)
+% Invented datas, without taking sigma_a in count (in progress)
 % setting up x and y
 x = resEM';
 y = centroid;
@@ -135,42 +135,6 @@ saveas(inversion_2d, 'inversion_2d.png')
 
 % /////////////////////////////////
 
-% /////////////////////////////////
-% test regression using toolbox
-% /////////////////////////////////
-
-x = centroid';
-y = sig3*(x<20) + sig2*(x>=20 & x < 30) + sig1*(x >= 30);
-
-for i = 1:length(y)
-    y(i) = y(i) + randn(1)*5e-4  ; % noise
-end
-
-model_SVM = fitrsvm(x,y, 'KernelFunction','gaussian','KernelScale','auto', 'Standardize',true);
-
-sigma0 = 0.2;
-kparams0 = [3.5, 6.2];
-model_GMR = fitrgp(x,y,'KernelFunction','squaredexponential',...
-     'KernelParameters',kparams0,'Sigma',sigma0);
-
-yfit_GMR = predict(model_GMR,x);
-yfit_SVM = predict(model_SVM,x);
-
-% plot
-% test = figure(4);
-% hold on
-% plot(y, x)
-% plot(yfit_SVM, x)
-% plot(yfit_GMR, x)
-% % xlim([-0.001 0.015])
-% % ylim([-5 55])
-% legend('m0','SVM', 'GMR')
-% xlabel('conductivity \sigma')
-% ylabel('centroids')
-% title('Using Machine Learning ToolBox')
-% hold off
-% saveas(test, 'test_fig.png')
-
 toc
 
 % /////////////////////////////////
@@ -182,7 +146,7 @@ toc
 function C = forwardEM1D(ztop, sigma, orient, sep)
     if orient == 1 % 1 = horizontal
         R = ((4.*((ztop./sep).^2)+1).^(1/2))-2.*(ztop./sep);
-    else % 0 = vertical
+    else           % 0 = vertical
         R = ((4.*((ztop./sep).^2)+1).^(1/2)).\1;
     end
     C = sigma(1)*(1-R(1)) + sigma(end)*R(end);
