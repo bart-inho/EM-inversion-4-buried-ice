@@ -1,28 +1,26 @@
 clear all, close all, clc, 
 
+tic
+
 % //////////////////////////////////////////
 % FORWARD MODEL
 % //////////////////////////////////////////
-tic
 
-% initial conductivity
-sig = [1e-1; 8e-2; 7e-2];
+% initial parameters
+sig = [1e-3; 5e-4; 6e-4];
 depth = 10;
+distance = 50; % A-B distance [m]
 
 % frequency and depth
-freq = 1.6e5;
+% freq = 1.6e5;
 % depth = round(500/sqrt(sig(1)*freq)); % depth [m]
 z = [];
 for i = 1:length(sig)
     z = [z ceil(i/length(sig) * depth)];
 end
 
-% building inital conductivity model
-distance = 50; % A-B distance [m]
+% building inital conductivity model -> 1D
 resmap = ones(depth, distance);
-% resmap(1:end,1:end) = sig(1);
-% resmap(z(1):z(2),1:end) = sig(2);
-% resmap(z(2):end,1:end) = sig(3);
 resmap(1:end,1:end) = sig(1);
 for i = 1:length(z)-1
     resmap(z(i):z(i+1), 1:end) = sig(i+1);
@@ -57,15 +55,6 @@ for i = centroid(2:end)
     end
 end
 
-% plotting the forward model
-% figure(2)
-% hold on
-% plot(resEM, centroid)
-% ylabel('centroids')
-% xlabel('conductivity \sigma')
-% title('forward model')
-% hold off
-
 %  /////////////////////////////////////////
 % giving sigma_a
 % ///////////////////////////////////////
@@ -77,50 +66,54 @@ end
 % sep is a scalar value specifying the coil separation [m]
 % if two direction desired : sigma_a = [sigma_a_v sigma_a_h] ?
 
-coilsep = 1;
-ori = 0;
-sigma_a = forwardEM1D(z, sig, ori, coilsep);
-disp(sigma_a)
+% + Créer une matrice 3xN -> avec sigma, sep, orient
+
+% d_tot = GeometricalData(z, sig, coilsep, ori);
+% sigma_a = forwardEM1D(z, sig, ori, coilsep);
+% disp('sigma_a = ' );disp(sigma_a)
 
 % /////////////////////////////////////////////
 % Inversion ???
 % /////////////////////////////////////////////
+% G est quelque chose de linéair -> sigma a est une moyenne pondérée 
+% 
 
-dstd = 1e0;
-lambda = 1e0;
-k = 1:1:length(centroid);
-m0 = ones(length(centroid), 1) * mean(sig);
-
-% not sure of how to build matrix A (or G depending the source)
-A = zeros(length(centroid), length(k));
-A(:, :) = centroid(:).^repmat(k, length(centroid), 1);
-
-L = (1/dstd)*speye(length(centroid));
-Qv = (4*(centroid./coilsep))./((4*(centroid.^2)./(coilsep.^2)+1).^(3/2));
-Qh = 2 - ((4*(centroid./coilsep))/(sqrt(4*((centroid.^2)./(coilsep.^2))))) ;
-
-Wd = L'*L;
-Wm = diag(1./Qv);
+% dstd = 1e-1; % 
+% lambda = 2e0; % 
+% k = 1:1:length(centroid);
+% m0 = ones(length(centroid), 1) * mean(sig);
+% % m0 = resEM';
+% 
+% % not sure of how to build matrix A (or G depending the source)
+% A = zeros(length(centroid), length(k));
+% A(:, :) = centroid(:).^repmat(k, length(centroid), 1);
+% 
+% L = (1/dstd)*speye(length(centroid));
+% Qv = (4*(centroid./coilsep))./((4*(centroid.^2)./(coilsep.^2)+1).^(3/2));
+% Qh = 2 - ((4*(centroid./coilsep))/(sqrt(4*((centroid.^2)./(coilsep.^2))))) ;
+% 
+% Wd = L'*L;
+% Wm = diag(1./Qv);
 
 % We get a correct matrix m^N but not optimized.
-m = m0 + inv(Wm)*A'*inv(A*inv(Wm)*A'+Wd*lambda)*(sigma_a-A*m0);
-% m(m<0) = 0; % to not have "negative conductivity ?
+% m = m0 + inv(Wm)*A'*inv(A*inv(Wm)*A'-Wd*lambda)*(sigma_a+A*m0);
+% m(m<0) = 0; % to not have "negative" conductivity ?
 
 % optimization ?
 % phid = (A*m - sigma_a)'.*Wd*(A*m - sigma_a);
 % phim = (m - m0)'.*Wm*(m-m0);
 
-inversion = figure(4);
-hold on
-plot(m, centroid, 'r')
-plot(m0, centroid, 'k-.')
-plot(resEM, centroid, 'b--')
-legend('inverted model', 'm0', 'initial model')
-ylabel('centroid')
-xlabel('\sigma [S/m]')
-xlim([-1e-4 2e-3])
-hold off
-saveas(inversion, 'inversion_plt.png')
+% inversion = figure(4);
+% hold on
+% plot(m, centroid, 'r')
+% plot(m0, centroid, 'k-.')
+% plot(resEM, centroid, 'b--')
+% legend('inverted model', 'm0', 'initial model')
+% ylabel('centroid')
+% xlabel('\sigma [S/m]')
+% % xlim([-1e-4 2e-3])
+% hold off
+% saveas(inversion, 'inversion_plt.png')
 
 % ??
 
@@ -131,16 +124,39 @@ toc
 % functions 
 % /////////////////////////////////
 
-% -> weight W could be better 
+sig = [20e-3; 2e-3; 20e-3];
+z = [0; 0.5; 1.5];
+coilsep = [1 2 3 4];
+coilsep_tot = repmat(coilsep,1, 2);
+ori = [ones(1, length(coilsep)) zeros(1, length(coilsep))];
 
-function C = forwardEM1D(ztop, sigma, orient, sep)
-    if orient == 1     % 1 = horizontal
-        R = ((4.*((ztop./sep).^2)+1).^(1/2))-2.*(ztop./sep);
-    elseif orient == 0 % 0 = vertical
-        R = ((4.*((ztop./sep).^2)+1).^(1/2)).\1;
-    end
-    C = sigma(1)*(1-R(1)) + sigma(end)*R(end);
-        for j = 2:length(sigma)-1
-           C = C + sigma(j).*(R(j-1) - R(j));
-        end
+for i = 1:length(coilsep_tot)
+    sigma_tot(i) = test(z, sig, ori(i), coilsep_tot(i));
 end
+
+data_obs = [sigma_tot; coilsep_tot; ori]';
+
+function surf_sig = test(ztop, sigma, orient, sep)
+    if orient == 1     % 1 = horizontal
+        w = ((4.*((ztop./sep).^2)+1).^(1/2))-2.*(ztop./sep);
+    elseif orient == 0 % 0 = vertical
+        w = ((4.*((ztop./sep).^2)+1).^(1/2)).\1;
+    end
+	R = w(1:end-1)-w(2:end);
+    R(end+1) = w(end);
+    surf_sig = sum(sigma(:).*R(:));
+end
+
+% function data = GeometricalData(z_top, sigma_true, coilseparation, orientation)
+%     data = [];
+%     data(:) = [forwardEM1D(z_top, sigma_true, coilseparation(:), orientation(:)) coilspacing orientation];
+% end
+
+
+
+
+
+
+
+
+
