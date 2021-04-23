@@ -27,8 +27,8 @@ D = spdiags([e -2*e e], -1:1, nlay, nlay);
 D(1, :) = 0; D(end, :) = 0;
 
 % regularization parameters
-alpha_s = 0 ;
-alpha_z = 0 ;
+alpha_s = 1 ;
+alpha_z = 1 ;
 
 % regularization
 Wm = alpha_s*I + alpha_z*(D'*D);
@@ -49,4 +49,9 @@ for i = xlog
     m(:, i+1) = Inversion2D(ztop, data(data(:, 4)==i,1:3), lamb, Wm, 1e-10, 2e2);
 end
 
-imagesc(m)
+figure()
+inv = pcolor(xlog, ztop, m);
+ylabel('depth [m]')
+xlabel('width [m]')
+shading interp;
+saveas(inv, 'inversion_2d', 'png')
