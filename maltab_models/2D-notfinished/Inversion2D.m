@@ -6,11 +6,14 @@ tic
 % load the dataset
 load data2D
 
-xlog = 0:0.2:10; %
+xlog = 0:0.2:10; % horz
+ztop = 0:0.1:5; % vert
+
+nx = length(xlog);
+nz = length(ztop);
 
 % model parameters
 ndata = size(data,1);
-ztop = 0:0.1:5;
 nlay = length(ztop);
 sigma_a = data(:, 1);
 nsteps = length(unique(data(:, 4)));
@@ -38,11 +41,19 @@ end
 
 G = blkdiag(G_stack{:});
 
+% set parameters for the inversion
+alphax = 1.0; % weight on model smoothness in x-direction
+alphaz = 1.0; % weight on model smoothness in z-direction
+
+% calculate data and model weighting matrices
+[Dx,Dz] = smoothweightEM2D(nx,nz);
+Wm = alphax*(Dx'*Dx) + alphaz*(Dz'*Dz);
+
 % inversion
 
-yolo = G';
+lamb = 1e-4;
 
-A = G'*G;
+A = G'*G + Wm*lamb; 
 b = G'*data(:, 1);
 
 m = cgs(A, b, 1e-10, 1e2);

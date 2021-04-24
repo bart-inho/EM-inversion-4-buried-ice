@@ -1,0 +1,23 @@
+function [Dx,Dz] = smoothweightEM2D(nx,nz)
+%
+% This function computes matrices Wx and Wz that approximate the horizontal
+% and vertical second derivatives when applied to a model vector m, where m
+% represents a 2D distribution of some geophysical parameter.  Entries of m
+% are taken row by row from the 2D image.
+%
+% Syntax:  [Dx,Dz] = smoothweight(nx,nz);
+%
+% nx = number of model cells in x direction
+% nz = number of model cells in z direction
+%
+% by James Irving
+% June 2019
+
+ncells = nx*nz;
+weights = repmat([1 -2 1],ncells,1);
+Dx = spdiags(weights,[-1 0 1],ncells,ncells)';
+Dx(1:nx:end,:) = 0;
+Dx(nx:nx:end,:) = 0;
+Dz = spdiags(weights,[-nx 0 nx],ncells,ncells)';
+Dz(1:nx,:) = 0;
+Dz(((nz-1)*nx+1):nx*nz,:) = 0;
