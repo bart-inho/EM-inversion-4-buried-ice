@@ -9,44 +9,18 @@ load data2D
 xlog = 0:1:10; %
 
 % model parameters
-ndata = size(data,1);
 ztop = 0:0.1:2;
-nlay = length(ztop);
 sigma_a = data(:, 1);
 
-figure()
-plot(sigma_a, '*')
-hold on
+ndata = size(data, 1);
+ndata_pos = size(data(data(:, 4) == 0),1);
+nlay = length(ztop);
+G = zeros(ndata, nlay*ndata_pos);   % initialize W matrix
+G_prov = zeros(ndata_pos, nlay);
 
-% smallness
-I = eye(nlay);
-
-% smoothnesse = ones(nlay,1);
-e = ones(nlay,1);
-D = spdiags([e -2*e e], -1:1, nlay, nlay);
-D(1, :) = 0; D(end, :) = 0;
-
-% regularization parameters
-alpha_s = 0 ;
-alpha_z = 0 ;
-
-% regularization
-Wm = alpha_s*I + alpha_z*(D'*D);
-lamb = 1e-6;
-
-% noise
-for i = 1:length(sigma_a)
-    sigma_a(i) = sigma_a(i)+normrnd(0,1)*1e-5;
-end
-data(:,1) = sigma_a;
-
-plot(sigma_a, 'x')
-hold off
-
-m = zeros(length(ztop),length(xlog));
-
-for i = xlog
-    m(:, i+1) = Inversion2D(ztop, data(data(:, 4)==i,1:3), lamb, Wm, 1e-10, 2e2);
-end
-
-imagesc(m)
+for j = 
+    for i=1:size(G_prov, 1)        % populate the matrix row-by-row
+        R = WeightEM(ztop, data(i,2), data(i,3));
+        G_prov(i, :) = R;
+    end
+    

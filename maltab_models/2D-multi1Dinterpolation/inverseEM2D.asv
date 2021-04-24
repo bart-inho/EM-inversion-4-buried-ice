@@ -6,14 +6,13 @@ tic
 % load the dataset
 load data2D
 
-xlog = 0:0.2:10; %
+xlog = 0:0.1:10; %
 
 % model parameters
 ndata = size(data,1);
 ztop = 0:0.1:4;
 nlay = length(ztop);
 sigma_a = data(:, 1);
-nsteps = length(unique(data(:, 4)));
 
 ndata_p = size(data(data(:, 4) == 1), 1);
 ndata = size(data,1);
@@ -21,7 +20,7 @@ nlay = length(ztop);
 
 G_stack = cell(1, nlay);
 
-for j = 1:nsteps
+for j = 1:
     G_prov = zeros(ndata_p, nlay);   % initialize W matrix
     for i=1:size(G_prov, 1)        % populate the matrix row-by-row
         R = WeightEM(ztop, data(i,2), data(i,3));
@@ -40,7 +39,7 @@ A = G'*G;
 b = G'*data(:, 1);
 
 m = cgs(A, b, 1e-10, 1e2);
-m = reshape(m, [], nsteps);
+
 
 toc
 figure()
@@ -48,5 +47,5 @@ inv = pcolor(xlog, ztop, m);
 ylabel('depth [m]')
 xlabel('width [m]')
 set(gca, 'YDir','reverse')
-% shading interp;
+shading interp;
 saveas(inv, 'inversion_2d', 'png')
