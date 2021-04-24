@@ -8,7 +8,7 @@ function ObsData = forwardEM2D(sig, ztop, sepa, orient, x)
     x = ones(length(sepa), 1)*x;
     sigma_a = ones(length(sepa), 1);
     for i = 1:length(sepa)
-        W = WeightEM(ztop, sepa(i), orient(i)) ;
+        W = weightEM2D(ztop, sepa(i), orient(i)) ;
         sigma_a(i) = W*sig(:);
     end
     ObsData = [sigma_a sepa orient x];
