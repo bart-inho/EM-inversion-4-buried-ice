@@ -16,4 +16,3 @@ function m = inversionEM2D(ztop, data, lamb, Wm, tol, itmax)
     b = G'*data(:, 1);
     % inversion
     m = cgs(A, b, tol, itmax);
-end

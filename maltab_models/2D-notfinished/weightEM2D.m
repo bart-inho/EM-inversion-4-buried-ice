@@ -10,4 +10,3 @@ function Weight = weightEM2D(z, sep, ori)
     Weight = w(1:end-1)-w(2:end); % R = weight (R(zn) - R(zn+1))
     Weight(end+1) = w(end); % R(end) = only R(z)
     Weight = Weight';
-end

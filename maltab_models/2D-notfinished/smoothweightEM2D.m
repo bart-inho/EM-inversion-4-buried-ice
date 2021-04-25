@@ -1,4 +1,4 @@
-function [Dx,Dz] = smoothweightEM2D(nx,nz)
+function [Dz,Dx] = smoothweightEM2D(nx,nz)
 %
 % This function computes matrices Wx and Wz that approximate the horizontal
 % and vertical second derivatives when applied to a model vector m, where m
@@ -15,9 +15,9 @@ function [Dx,Dz] = smoothweightEM2D(nx,nz)
 
 ncells = nx*nz;
 weights = repmat([1 -2 1],ncells,1);
-Dx = spdiags(weights,[-1 0 1],ncells,ncells)';
-Dx(1:nx:end,:) = 0;
-Dx(nx:nx:end,:) = 0;
-Dz = spdiags(weights,[-nx 0 nx],ncells,ncells)';
-Dz(1:nx,:) = 0;
-Dz(((nz-1)*nx+1):nx*nz,:) = 0;
+Dz = spdiags(weights,[-1 0 1],ncells,ncells);
+Dz(1:nx:end,:) = 0;
+Dz(nx:nx:end,:) = 0;
+Dx = spdiags(weights,[-nx 0 nx],ncells,ncells);
+Dx(1:nx,:) = 0;
+Dx(((nz-1)*nx+1):nx*nz,:) = 0;

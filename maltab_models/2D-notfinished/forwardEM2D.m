@@ -12,4 +12,3 @@ function ObsData = forwardEM2D(sig, ztop, sepa, orient, x)
         sigma_a(i) = W*sig(:);
     end
     ObsData = [sigma_a sepa orient x];
-end
