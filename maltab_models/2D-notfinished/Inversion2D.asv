@@ -48,7 +48,7 @@ alphaz = 1; % weight on model smoothness in z-direction
 Wm = alphax*(Dx'*Dx) + alphaz*(Dz'*Dz);
 
 % inversion
-lamb = 1e-8;
+lamb = 1e-10;
 
 A = G'*G + Wm*lamb; 
 b = G'*data(:, 1);
