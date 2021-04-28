@@ -2,11 +2,11 @@ clear, close, clc,
 
 tic
 % initial parameters
-xlog = 0:0.2:10; %[m]
+xlog = 0:0.5:30; %[m]
 nlay = length(xlog);
 sig = repmat([20e-3; 1e-3; 20e-3; 10e-3], 1, nlay);
-ztop = repmat([0; 0.5; 1; 2], 1, nlay);
-coilsep = repmat(0.1:0.1:8, nlay, 1)';
+ztop = repmat([0; 2; 4; 8], 1, nlay);
+coilsep = repmat(0.1:0.1:12, nlay, 1)';
 ori = repmat([0 1], length(xlog), size(coilsep, 1)/2)';
 
 data = [];

@@ -7,14 +7,12 @@ tic
 load data2D
 
 xlog = unique(data(:,4));
-ztop = 0:0.1:3; % vert
+ztop = 0:0.1:10; % vert
 
 nx = length(xlog);
 nz = length(ztop);
 
 % model parameters
-ndata = size(data,1);
-nlay = length(ztop);
 sigma_a = data(:, 1);
 nsteps = length(unique(data(:, 4)));
 
