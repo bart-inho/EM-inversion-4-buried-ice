@@ -24,7 +24,13 @@ Once the weights of each layer are defined, we can weight the different conducti
 
 It can be seen that for each conductivity value the weight of the target layer is subtracted by the weight of the lower layer. For the last layer, we consider its infinite thickness.
 
+### Create synthetic data
 
+### Inversion method
+
+### Focus on regularization
+
+## Applications
 
 in progres...
 
