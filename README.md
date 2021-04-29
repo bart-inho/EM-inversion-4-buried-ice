@@ -24,16 +24,27 @@ Once the weights of each layer are defined, we can weight the different conducti
 
 It can be seen that for each conductivity value the weight of the target layer is subtracted by the weight of the lower layer. For the last layer, we consider its infinite thickness.
 
-### Create synthetic data
+### Forward model
+In a real-world setting, the apparent data is obtained directly from the field. In our case, we need to create synthetic data to be inverted. In a real-world setting, the apparent data is obtained directly from the field. In our case, we need to create synthetic data to be inverted. We do this using the weight system defined above by Geonics. This is called the *"forward model"*. First, we need to define the parameters of our forward model. We will need the conductivity values of the layers, the layer boundary coordinates, the coil spacing, the coil orientations and the horizontal discretization.
+
+Exemple :
 ```matlab
 xlog = 0:0.1:20; %[m] horizontal discretization
 nmeasure = length(xlog); % number of horizontal measurments
 ztop = repmat([0; 1; 4; 7], 1, nmeasure); % top layer vertical coordinate
-
 sig = repmat([20e-3; 1e-3; 20e-3; 10e-3], 1, nmeasure); % true model map
-
 coilsep = repmat(0.1:0.1:10, nmeasure, 1)'; % coilseparations
 ori = repmat([0 1], length(xlog), size(coilsep, 1)/2)'; % orientation of the dipole (0 = vertical, 1 = horizontal)
+```
+
+Then we can use the weighting formula defined by Geonics to generate the synthetic apparent conductivities. Then we can use the weighting formula defined by Geonics to generate the synthetic apparent conductivities. The data are stored in a row by row matrix containing the geometry of the model (apparent sigma, coilspacing, orientation, x-coordinate).
+
+Exemple :
+```matlab
+for i = 1:length(xlog)
+    % generate datas in a matrix that contains physical properties
+    data = [data; forwardEM2D(sig(:, i), ztop(:, i), coilsep(:, i), ori(:, i), xlog(i))];
+end
 ```
 
 ### Inversion method
