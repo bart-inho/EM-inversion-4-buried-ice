@@ -1,6 +1,5 @@
-# Travail de Bachelor - Anhorn Barthélémy
-Contexte géophysique : Electromagnétisme, Induction, Retrait des glaciers
+# Bachelor Thesis - Anhorn Barthélémy
 
-Projet (provisoir) : développer un modèle forward et un modèle d'inversion sur MATLAB et Python, dans le but d'identifier/quantifier du permafrost ou de la glace enfouie dans la région proglaciaire alpine. 
+The goal of the project is to build a program to invert geophysical data collected in the pro-glacial domain, in order to identify resistive layers that may correspond to permafrost or buried ice. Using MATLAB, I built a simple program with only a few functions, which inverts the data at each measurement point into one dimension. A large weight matrix connects the different measurement points and their physical characteristics allowing to apply a horizontal and vertical regularization. To test my MATLAB code, I will quickly programme in python with the basic functions of simPEG and PyGimli some one-dimensional inversions. 
 
-Outil(s) : PyGimli, SimPEG, MATLAB
+Tools : PyGimli, SimPEG, MATLAB
