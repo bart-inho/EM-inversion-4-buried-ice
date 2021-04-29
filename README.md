@@ -12,9 +12,15 @@ To build our sub-surface model we need to use some tools. All the equations used
 
 In our case, we synthetically create our data from a *True Model* that we arbitrarily define to fit the context we want to study. To do that we use an another physical relationship that depends of the physical caracteristic of the subsurface to calculate the weight of each layer :
 
-![weight function](https://latex.codecogs.com/gif.latex?%5C%5C%20R_V%28r%29%20%3D%20%5Cfrac%7B1%7D%7B%284r%5E2&plus;1%29%5E%7B%5Cfrac%7B1%7D%7B2%7D%7D%7D%5C%5C%20R_H%28r%29%20%3D%20%5Csqrt%7B4r%5E2&plus;1%7D%20-%202r%5C%5C%20%5C%5C%20%5Ctextrm%7Bwith%20%7D%20r%20%3D%20%5Cfrac%7Bz%7D%7Bs%7D%5C%5C)
+![weight function](https://latex.codecogs.com/gif.latex?%5C%5C%20R_V%28z%29%20%3D%20%5Cfrac%7B1%7D%7B%284z%5E2&plus;1%29%5E%7B%5Cfrac%7B1%7D%7B2%7D%7D%7D%5C%5C%20R_H%28z%29%20%3D%20%5Csqrt%7B4z%5E2&plus;1%7D%20-%202z%5C%5C%20%5C%5C%20z%20%3D%20%5Cfrac%7Bz_%7Btop%7D%7D%7Bs%7D%5C%5C%20z_%7Btop%7D%20%3D%20%5Ctextrm%7Bvertical%20coordinate%20of%20the%20top%20of%20the%20layer%7D)
 
-Once the weight is calculated for each individual layer and for each coil spacing, the weight values of the lower layers must be taken into account for each layer. :
+Once the weights of each layer are defined, we can weight the different conductivity values of the real model such as for a three layer model :
+
+![weight tot](https://latex.codecogs.com/gif.latex?%5Csigma_a%20%3D%20%5Csigma_1%5B1-R%28z_1%29%5D%20&plus;%20%5Csigma_2%5BR%28z_1%29-R%28z_2%29%5D%20&plus;%20%5Csigma_3%20R%28z_2%29)
+
+It can be seen that for each conductivity value the weight of the target layer is subtracted by the weight of the lower layer. For the last layer, we consider its infinite thickness.
+
+
 
 
 
