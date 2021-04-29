@@ -25,7 +25,7 @@ Once the weights of each layer are defined, we can weight the different conducti
 It can be seen that for each conductivity value the weight of the target layer is subtracted by the weight of the lower layer. For the last layer, we consider its infinite thickness.
 
 ### Forward model
-In a real-world setting, the apparent data is obtained directly from the field. In our case, we need to create synthetic data to be inverted. In a real-world setting, the apparent data is obtained directly from the field. In our case, we need to create synthetic data to be inverted. We do this using the weight system defined above by Geonics. This is called the *"forward model"*. First, we need to define the parameters of our forward model. We will need the conductivity values of the layers, the layer boundary coordinates, the coil spacing, the coil orientations and the horizontal discretization.
+In a real-world setting, the apparent data is obtained directly from the field. In our case, we need to create synthetic data to be inverted. We do this using the weight system defined above by Geonics. This is called the *"forward model"*. First, we need to define the parameters of our forward model. We will need the conductivity values of the layers, the layer boundary coordinates, the coil spacing, the coil orientations and the horizontal discretization.
 
 Exemple :
 ```matlab
