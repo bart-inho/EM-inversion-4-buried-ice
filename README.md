@@ -8,6 +8,6 @@ To build our sub-surface model we need to use some tools. All the equations used
 
 ![sigma_a equation](https://latex.codecogs.com/gif.latex?%5Csigma_a%20%3D%20%5Cfrac%7B4%7D%7B%5Comega%20%5Cmu_0%20s%5E2%7D%20%5Cfrac%7BH_s%7D%7BH_p%7D)
 
-aa
+&omega
 
 Tools : PyGimli, SimPEG, MATLAB
