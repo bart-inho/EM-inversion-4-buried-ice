@@ -2,9 +2,9 @@ clear, close, clc,
 
 tic
 % initial parameters
-xlog = 0:0.5:20; %[m] horizontal discretization
+xlog = 0:0.1:20; %[m] horizontal discretization
 nmeasure = length(xlog); % number of horizontal measurments
-ztop = repmat([0; 0.5; 3; 7], 1, nmeasure); % top layer vertical coordinate
+ztop = repmat([0; 1; 4; 7], 1, nmeasure); % top layer vertical coordinate
 
 sig = repmat([20e-3; 1e-3; 20e-3; 10e-3], 1, nmeasure); % true model map
 
