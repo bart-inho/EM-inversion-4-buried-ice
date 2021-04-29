@@ -13,11 +13,15 @@ function [Dx,Dz] = smoothweightEM2D(nx,nz)
 % by James Irving
 % June 2019
 
-ncells = nx*nz;
-weights = repmat([1 -2 1],ncells,1);
-Dx = spdiags(weights,[-nx 0 nx],ncells,ncells);
-Dx(1:nx,:) = 0;
-Dx(((nz-1)*nx+1):nx*nz,:) = 0;
+ncells = nx*nz; % nuber of cell
+weights = repmat([1 -2 1],ncells,1); % preset the matrix
+
+% vertical smoothness
 Dz = spdiags(weights,[-1 0 1],ncells,ncells);
-Dz(1:nx:end,:) = 0;
-Dz(nx:nx:end,:) = 0;
+Dz(1:nz:end,:) = 0; % = 0 avoiding artefacts
+Dz(nz:nz:end,:) = 0;
+
+% horizontal smoothness
+Dx = spdiags(weights,[-nz 0 nz],ncells,ncells);
+Dx(1:nz,:) = 0; % = 0 avoiding artefacts
+Dx(((nx-1)*nz+1):nx*nz,:) = 0;
