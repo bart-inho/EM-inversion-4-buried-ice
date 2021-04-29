@@ -48,7 +48,11 @@ end
 ```
 
 ### Inversion method
-in progres...
+
+
+
+
+
 ### Focus on regularization
 in progres...
 ## Applications
