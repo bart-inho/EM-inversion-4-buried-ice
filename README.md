@@ -34,14 +34,14 @@ nmeasure = length(xlog); % number of horizontal measurments
 ztop = repmat([0; 1; 4; 7], 1, nmeasure); % top layer vertical coordinate
 sig = repmat([20e-3; 1e-3; 20e-3; 10e-3], 1, nmeasure); % true model map
 coilsep = repmat(0.1:0.1:10, nmeasure, 1)'; % coilseparations
-ori = repmat([0 1], length(xlog), size(coilsep, 1)/2)'; % orientation of the dipole (0 = vertical, 1 = horizontal)
+ori = repmat([0 1], nmeasure, size(coilsep, 1)/2)'; % orientation of the dipole (0 = vertical, 1 = horizontal)
 ```
 
 Then we can use the weighting formula defined by Geonics to generate the synthetic apparent conductivities. Then we can use the weighting formula defined by Geonics to generate the synthetic apparent conductivities. The data are stored in a row by row matrix containing the geometry of the model (apparent sigma, coilspacing, orientation, x-coordinate).
 
 Exemple :
 ```matlab
-for i = 1:length(xlog)
+for i = 1:nmeasure
     % generate datas in a matrix that contains physical properties
     data = [data; forwardEM2D(sig(:, i), ztop(:, i), coilsep(:, i), ori(:, i), xlog(i))];
 end
