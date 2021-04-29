@@ -4,6 +4,8 @@ The goal of the project is to build a program to invert geophysical data collect
 
 ## Theory
 
+### Geonics physics
+
 To build our sub-surface model from apparents conductivity we need to use equations. All the equations used in this programm has been defined in a [Geonics publication](http://www.geonics.com/pdfs/technicalnotes/tn6.pdf). In this paper, Geonics presents a simplified physical model that generates correct approximations. However, one must be all the more attentive to the framework in which the data were collected. 
 
 In this work we are mainly talking about apparent conductivity. But the measurement of this value is indirect. We use a formula which combines the magnetic field emitted by the measuring device (known) and the magnetic field induced by the subsurface (measured). In the Geonics documentation, the apparent conductivity is defined as :
