@@ -49,13 +49,14 @@ end
 
 
 
+in progress...
 
 
 ### Focus on regularization
-in progres...
+in progress...
 ## Applications
 
-in progres...
+in progress...
 
 
 
