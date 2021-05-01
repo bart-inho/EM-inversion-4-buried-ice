@@ -2,9 +2,7 @@
 
 The goal of the project is to build a program to invert geophysical data collected in the pro-glacial domain with EM methods, in order to identify resistive layers that may correspond to permafrost or buried ice. Using MATLAB, I developed a simple program that need only a few functions, which inverts the data at each measurement point. A large weight matrix connects the different measurement points and their physical characteristics allowing to apply a horizontal and vertical regularization. To test my MATLAB code, I will quickly programmed in python with the basic functions of simPEG and PyGimli some one-dimensional inversions. 
 
-## Theory
-
-### Geonics physics
+## Geonics physics
 
 To build our sub-surface model from apparents conductivity we need to use equations. All the equations used in this programm has been defined in a [Geonics publication](http://www.geonics.com/pdfs/technicalnotes/tn6.pdf). In this paper, Geonics presents a simplified physical model that generates correct approximations. However, one must be all the more attentive to the framework in which the data were collected. 
 
@@ -22,7 +20,9 @@ Once the weights of each layer are defined, we can weight the different conducti
 
 ![weight tot](https://latex.codecogs.com/gif.latex?%5Csigma_a%20%3D%20%5Csigma_1%5B1-R%28z_1%29%5D%20&plus;%20%5Csigma_2%5BR%28z_1%29-R%28z_2%29%5D%20&plus;%20%5Csigma_3%20R%28z_2%29)
 
-### Forward model
+## Inversion Theory
+
+## Forward model
 In a real-world setting, the apparent data is obtained directly from the field. In our case, we need to create synthetic data to be inverted. We do this using the weight system defined above by Geonics. This is called the *"forward model"*. First, we need to define the parameters of our forward model. We will need the conductivity values of the layers, the layer boundary coordinates, the coil spacing, the coil orientations and the horizontal discretization.
 
 Exemple :
@@ -35,7 +35,7 @@ coilsep = repmat(0.1:0.1:10, nmeasure, 1)'; % coilseparations
 ori = repmat([0 1], nmeasure, size(coilsep, 1)/2)'; % orientation of the dipole (0 = vertical, 1 = horizontal)
 ```
 
-#### Generate synthetic datas
+### Generate synthetic datas
 Then we can use the weighting formula defined by Geonics to generate the synthetic apparent conductivities. Then we can use the weighting formula defined by Geonics to generate the synthetic apparent conductivities. The data are stored in a row by row matrix containing the geometry of the model (apparent sigma, coilspacing, orientation, x-coordinate).
 
 Exemple :
@@ -46,7 +46,7 @@ for i = 1:nmeasure
 end
 ```
 
-#### Add Gaussian noise
+### Add Gaussian noise
 
 Gaussian noise allows to add a certain amount of noise that depends of a certain standard deviation :
 
@@ -61,12 +61,13 @@ sigma_a = sigma_a + sd*mean(abs(sigma_a))*randn(size(sigma_a));
 
 With sd = standard deviation. This standard deviation allows us to make the amount of noise match the noise actually measured in the field.
 
-### Inversion method
-
 
 
 in progress...
 
+## Inversion
+
+### G matrix
 
 ### Focus on regularization
 in progress...
