@@ -9,9 +9,6 @@ function [Dx,Dz] = smoothweightEM2D(nx,nz)
 %
 % nx = number of model cells in x direction
 % nz = number of model cells in z direction
-%
-% by James Irving
-% June 2019
 
 ncells = nx*nz; % nuber of cell
 weights = repmat([1 -2 1],ncells,1); % preset the matrix
