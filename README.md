@@ -55,11 +55,11 @@ Gaussian noise allows to add a certain amount of noise that depends of a certain
 It can be programmed in this way :
 
 ```matlab
-noi = 0.1;
-sigma_a = sigma_a + noi*mean(abs(sigma_a))*randn(size(sigma_a));
+sd = 0.1;
+sigma_a = sigma_a + sd*mean(abs(sigma_a))*randn(size(sigma_a));
 ```
 
-With noi = standard deviation. This standard deviation allows us to make it match the real noise actually measured in the field.
+With sd = standard deviation. This standard deviation allows us to make it match the real noise actually measured in the field.
 
 ### Inversion method
 
