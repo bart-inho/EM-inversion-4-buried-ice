@@ -2,7 +2,7 @@ clear, close, clc,
 
 tic
 % initial parameters
-xlog = 0:0.2:5; %[m] horizontal discretization
+xlog = 0:0.2:10; %[m] horizontal discretization
 nmeasure = length(xlog); % number of horizontal measurments
 ztop = repmat([0; 1; 1.5; 3], 1, nmeasure); % top layer vertical coordinate
 
