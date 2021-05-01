@@ -35,6 +35,7 @@ coilsep = repmat(0.1:0.1:10, nmeasure, 1)'; % coilseparations
 ori = repmat([0 1], nmeasure, size(coilsep, 1)/2)'; % orientation of the dipole (0 = vertical, 1 = horizontal)
 ```
 
+#### Generate synthetic datas
 Then we can use the weighting formula defined by Geonics to generate the synthetic apparent conductivities. Then we can use the weighting formula defined by Geonics to generate the synthetic apparent conductivities. The data are stored in a row by row matrix containing the geometry of the model (apparent sigma, coilspacing, orientation, x-coordinate).
 
 Exemple :
@@ -44,6 +45,21 @@ for i = 1:nmeasure
     data = [data; forwardEM2D(sig(:, i), ztop(:, i), coilsep(:, i), ori(:, i), xlog(i))];
 end
 ```
+
+#### Add Gaussian noise
+
+Gaussian noise allows to add a certain amount of noise that depends of a certain standard deviation :
+
+![gaussian noise](https://wikimedia.org/api/rest_v1/media/math/render/svg/56d469e7d13e0c93f944b159302ab28d1c306fcf)
+
+It can be programmed in this way :
+
+```matlab
+noi = 0.1;
+sigma_a = sigma_a + noi*mean(abs(sigma_a))*randn(size(sigma_a));
+```
+
+With noi = standard deviation. This standard deviation allows us to make it match the real noise actually measured in the field.
 
 ### Inversion method
 
