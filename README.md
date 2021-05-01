@@ -59,7 +59,7 @@ sd = 0.1;
 sigma_a = sigma_a + sd*mean(abs(sigma_a))*randn(size(sigma_a));
 ```
 
-With sd = standard deviation. This standard deviation allows us to make it match the real noise actually measured in the field.
+With sd = standard deviation. This standard deviation allows us to make the amount of noise match the noise actually measured in the field.
 
 ### Inversion method
 
