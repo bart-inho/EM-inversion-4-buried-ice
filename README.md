@@ -22,6 +22,8 @@ Once the weights of each layer are defined, we can weight the different conducti
 
 ## Inverse Theory
 
+in progess...
+
 ## Forward model
 In a real-world setting, the apparent data is obtained directly from the field. In our case, we need to create synthetic data to be inverted. We do this using the weight system defined above by Geonics. This is called the *"forward model"*. First, we need to define the parameters of our forward model. We will need the conductivity values of the layers, the layer boundary coordinates, the coil spacing, the coil orientations and the horizontal discretization.
 
@@ -60,7 +62,6 @@ sigma_a = sigma_a + sd*mean(abs(sigma_a))*randn(size(sigma_a));
 ```
 
 With sd = standard deviation. This standard deviation allows us to make the amount of noise match the noise actually measured in the field.
-
 
 
 in progress...
