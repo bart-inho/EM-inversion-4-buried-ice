@@ -1,7 +1,7 @@
 % z = top layer height
 % sep = coil spacing
 % ori = coil orientation (0, 1)
-function Weight = Weight1D(z, sep, ori)
+function Weight = weightEM1D(z, sep, ori)
     if ori == 0
         w = (4*(z./sep).^2+1).^(-1/2);             % vertical dipole
     elseif ori == 1

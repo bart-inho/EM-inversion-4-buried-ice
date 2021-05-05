@@ -20,8 +20,8 @@ end
 data(:, 1) = sigma_a;
 
 % smoothness
-e = ones(nlay,1);
-D = spdiags([e -2*e e], -1:1, nlay, nlay);
+sm = ones(nlay,1);
+D = spdiags([sm -2*sm sm], -1:1, nlay, nlay);
 D(1, :) = 0; D(end, :) = 0;
 
 % regularization

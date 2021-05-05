@@ -46,30 +46,30 @@ Wm = alphax*(Dx'*Dx) + alphaz*(Dz'*Dz);
 % inversion
 lamb = 1e-1; % noise fitting parameter
 tol = 1e-10; % tolerance max
-itmax = 1e3; % max iteration
+itmax = 1e4; % max iteration
 
 A = G'*G + Wm*lamb; 
 b = G'*data(:, 1);
 [m1,fl1,rr1,it1,rv1] = cgs(A, b, tol, itmax);
 m = reshape(m1, [], nx);
 
-% figure()
-% semilogy(0:length(rv1)-1,rv1/norm(b),'-')
-% hold on
-% yline(tol,'r--');
-% xlabel('Iteration number')
-% ylabel('Relative residual')
+figure()
+semilogy(0:length(rv1)-1,rv1/norm(b),'-')
+hold on
+yline(tol,'r--');
+xlabel('Iteration number')
+ylabel('Relative residual')
 
 figure()
-inv = imagesc(xlog, ztop, m);
+inv = pcolor(xlog, ztop, m);
 title('Inverted model')
 subtitle({['\lambda = ' num2str(lamb) ', \alpha_x = ' num2str(alphax), ', \alpha_z = ' num2str(alphaz)]...
     ['nx = ' num2str(nx) ', nz = ' num2str(nz) ', p_G(z) = ' num2str(noi)]...
-    ['coispacing = [ ' num2str(data(1, 2)) ', ' num2str(data(3, 2)) ', ' num2str(data(5, 2)) ' ]']})
+    ['coilspacing = [ ' num2str(data(1, 2)) ', ' num2str(data(3, 2)) ', ' num2str(data(5, 2)) ' ]']})
 set(gca, 'YDir','reverse')
 xlabel('width [m]')
 ylabel('depth [m]')
-% shading interp;
+shading interp;
 axis image
 c = colorbar;
 c.Label.String = '\sigma [S/m]';

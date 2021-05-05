@@ -14,6 +14,7 @@ function m = inversionEM1D(ztop, data, lamb, Wm, tol, itmax)
         R = weightEM1D(ztop, data(i,2), data(i,3));
         G(i, :) = R;
     end
+    size(G)
     % setting up inverse model
     A = G'*G + lamb*Wm;
     b = G'*data(:, 1);
