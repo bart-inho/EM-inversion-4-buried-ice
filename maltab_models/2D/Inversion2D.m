@@ -66,8 +66,10 @@ Wm = alphas*speye(length(m0)) + alphax*(Dx'*Dx) + alphaz*(Dz'*Dz);
 % chi2 = sum(((G*m1-d)./nstd).^2)./length(d);
 % disp(['Chi-squared misfit statistic = ',num2str(chi2)]);
 
+chi2 = 0;
 lamb = 4e5;
-for i = 1:100000
+
+while chi2<0.9 || chi2>1.1
     % inversion parameters
     tol = 1e-10; % tolerance for conjugate gradient solver
     itmax = 500; % maximum # of iterations
@@ -81,16 +83,8 @@ for i = 1:100000
     % calculate chi-squared misfit statistic (JI: added this part...
     % (chi2<1, fitting data too well; chi2>1, not fitting data enough)
     chi2 = sum(((G*m1-d)./nstd).^2)./length(d);
-    
-    if mod(i, 20) == 0
-        disp(['Chi-squared misfit statistic = ',num2str(chi2)]);
-    end
-    
-    if any(chi2>0.9 & chi2<1.1)
-        disp(['Chi-squared misfit statistic = ',num2str(chi2)])
-        disp(['lambda = ',num2str(lamb, '%.e')])
-    break
-    elseif any(chi2<=0.7)
+%     disp(['Chi-squared misfit statistic = ',num2str(chi2)]);
+    if any(chi2<=0.7)
         lamb = lamb + 1e4;
     elseif any(chi2>0.7 & chi2<=0.85)
         lamb = lamb + 1e3;
@@ -106,6 +100,10 @@ for i = 1:100000
         lamb = lamb - 1e4;
     end
 end
+
+disp(['Chi-squared misfit statistic = ',num2str(chi2)])
+disp(['lambda = ',num2str(lamb, '%.e')])
+
 %% evaluating model uncertainties
 disp('Calculating pseudoinverse of A matrix...');
 Ainv = pinv(full(A),1e-10);
