@@ -66,7 +66,7 @@ Wm = alphas*speye(length(m0)) + alphax*(Dx'*Dx) + alphaz*(Dz'*Dz);
 % chi2 = sum(((G*m1-d)./nstd).^2)./length(d);
 % disp(['Chi-squared misfit statistic = ',num2str(chi2)]);
 
-lamb = 4e5;
+lamb = 1e5;
 for i = 1:100000
     % inversion parameters
     tol = 1e-10; % tolerance for conjugate gradient solver
@@ -81,29 +81,22 @@ for i = 1:100000
     % calculate chi-squared misfit statistic (JI: added this part...
     % (chi2<1, fitting data too well; chi2>1, not fitting data enough)
     chi2 = sum(((G*m1-d)./nstd).^2)./length(d);
+    disp(['Chi-squared misfit statistic = ',num2str(chi2)]);
     
-    if mod(i, 20) == 0
-        disp(['Chi-squared misfit statistic = ',num2str(chi2)]);
-    end
-    
-    if any(chi2>0.9 & chi2<1.1)
-        disp(['Chi-squared misfit statistic = ',num2str(chi2)])
+    if any(chi2>0.95 & chi2<1.05)
         disp(['lambda = ',num2str(lamb, '%.e')])
-    break
+        break
     elseif any(chi2<=0.7)
-        lamb = lamb + 1e4;
+        lamb = lamb + 1e4
     elseif any(chi2>0.7 & chi2<=0.85)
         lamb = lamb + 1e3;
-    elseif any(chi2>0.85 & chi2<=1)
+    elseif any(chi2>0.8 & chi2<=1)
         lamb = lamb + 1e2;
-    elseif any(chi2>1 & chi2<=1.1)
-        lamb = lamb - 5e1;
-    elseif any(chi2>1.1 & chi2<=1.2)
+    elseif any(chi2>1 & chi2<1.2)
         lamb = lamb - 1e2;
-    elseif any(chi2>1.2 & chi2<=1.4)
+    elseif any(chi
+    elseif any(chi2>=1.2)
         lamb = lamb - 1e3;
-    elseif any(chi2>1.4)
-        lamb = lamb - 1e4;
     end
 end
 %% evaluating model uncertainties
