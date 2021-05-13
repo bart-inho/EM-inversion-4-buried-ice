@@ -2,14 +2,14 @@ clear, close, clc,
 
 tic
 % initial parameters
-xlog = 0:0.2:10; %[m] horizontal discretization
+xlog = 0:1:20; %[m] horizontal discretization
 nmeasure = length(xlog); % number of horizontal measurments
 ztop = repmat([0; 1.5; 3], 1, nmeasure); % top layer vertical coordinate
 
-sig = repmat([0.01; 0.05; 0.03], 1, nmeasure); % true model map
+sig = repmat([0.02; 0.001; 0.02], 1, nmeasure); % true model map
 coilsep = repmat([0.5 0.5 1 1 2 2 4 4], nmeasure, 1)'; % coilseparations
 ori = repmat([1 0], nmeasure, 4)'; % orientation of the dipole (0 = vertical, 1 = horizontal)
-
+imagesc(sig)
 data = []; % preset data matrix
 
 for i = 1:nmeasure

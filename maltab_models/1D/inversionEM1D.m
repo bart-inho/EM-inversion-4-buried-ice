@@ -6,18 +6,17 @@
 % tol : min tolerange for cgs function
 % itmax : max iteration to find minimum
 
-function m = inversionEM1D(ztop, data, lamb, Wm, tol, itmax)
+function [m, G, A] = inversionEM1D(nz, data, lamb, Wm, Wd, m0, tol, itmax)
     ndata = size(data,1);
-    nlay = length(ztop);
+    nlay = length(nz);
     G = zeros(ndata, nlay);   % initialize W matrix
     for i=1:size(G, 1)        % populate the matrix row-by-row
-        R = weightEM1D(ztop, data(i,2), data(i,3));
+        R = weightEM1D(nz, data(i,2), data(i,3));
         G(i, :) = R;
     end
-    size(G)
     % setting up inverse model
-    A = G'*G + lamb*Wm;
-    b = G'*data(:, 1);
+    A = G'*Wd*G + lamb*Wm;
+    b = G'*Wd*data(:,1) + lamb*Wm*m0;
     % inversion
     m = cgs(A, b, tol, itmax);
 end

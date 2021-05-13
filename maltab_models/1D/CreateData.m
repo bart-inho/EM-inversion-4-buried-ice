@@ -1,12 +1,12 @@
 clear, close, clc, 
 
 % initial parameters
-sig = [20e-3; 2e-3; 10e-3];
-z = [0; 0.5; 2];
-coilsep = repmat(4:0.5:8, 1, 2)'; % setting up coilspacing
-ori =  repmat([0; 0], length(coilsep)/2, 1) ;
-data = forwardEM1D(sig, z, ori, coilsep); % generate datas
-
+true_sigma = [2e-2; 1e-3; 2e-2];
+true_z = [0; 1; 4];
+coilsep = [0.5; 0.5; 1; 1; 2; 2; 4; 4]; % setting up coilspacing
+ori =  repmat([0; 1], length(coilsep)/2, 1) ;
+data = forwardEM1D(true_sigma, true_z, ori, coilsep); % generate datas
+% plot(true_sigma, true_z)
 % save datas
-save TrueModel sig
+save TrueModel true_sigma true_z
 save data1D data
