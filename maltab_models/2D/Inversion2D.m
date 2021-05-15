@@ -6,7 +6,7 @@ clear; clc; close all
 load data2D
 
 xlog = unique(data(:,4)); % horizontal size of the model
-ztop = 0:1:6; % vertical size of the model
+ztop = 0:0.1:10; % vertical size of the model
 nx = length(xlog); % number of discretization layers horizontal
 nz = length(ztop); % number of discretization layers vertical
 ndata = size(data,1); % number of sigma_a
@@ -78,15 +78,15 @@ dCm = reshape(diag(Cm),nz,nx);
 R = Ainv*G'*Wd*G;               % model resolution matrix
 dR = reshape(diag(R),nz,nx);
 
-% figure()
-% semilogy(0:length(rv1)-1,rv1/norm(b),'-')
-% hold on
-% yline(tol,'r--');
-% xlabel('Iteration number')
-% ylabel('Relative residual')
+figure()
+semilogy(0:length(rv1)-1,rv1/norm(b),'-')
+hold on
+yline(tol,'r--');
+xlabel('Iteration number')
+ylabel('Relative residual')
 
 figure
-% subplot(3,1,1)
+subplot(3,1,1)
 %inv = pcolor(xlog, ztop, m);
 imagesc(xlog,ztop,m);
 title('Inverted model')
@@ -103,16 +103,18 @@ c.Label.String = '\sigma [S/m]';
 % caxis([0 0.03]);
 %saveas(inv, 'inversion_2d', 'png')
 % 
-% subplot(3,1,2)
-% imagesc(xlog,ztop,log10(dCm));
-% title('log10(Posterior parameter variance)');
-% xlabel('Position [m]')
-% ylabel('Depth [m]')
-% colorbar
-% 
-% subplot(3,1,3)
-% imagesc(xlog,ztop,log10(dR));
-% title('log10(Resolution)');
-% xlabel('Position [m]')
-% ylabel('Depth [m]')
-% colorbar
+subplot(3,1,2)
+imagesc(xlog,ztop,log10(dCm));
+title('log10(Posterior parameter variance)');
+xlabel('Position [m]')
+ylabel('Depth [m]')
+axis image
+colorbar
+
+subplot(3,1,3)
+imagesc(xlog,ztop,log10(dR));
+title('log10(Resolution)');
+xlabel('Position [m]')
+ylabel('Depth [m]')
+axis image
+colorbar

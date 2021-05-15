@@ -1,5 +1,9 @@
 % simple 1D inversion of FDEM data acquired over a layered Earth using
 % multiple coil separations and both vertical and horizontal dipoles
+
+% L is the number of model parameter
+% N is the number of datas
+
 tic
 clear; close all; clc; tic
 
@@ -9,12 +13,13 @@ load TrueModel
 
 % model parameters
 ndata = size(data,1);
-nz = 0:.25:10;
+nz = 0:.2:10;
 nlay = length(nz);
 d = data(:, 1);
 
 % add Gaussian noise (JI: I changed this a bit to have some options)
-nperc = 5;  % noise level in percent
+nperc = 2.5;  % noise level in percent
+
 rng(99999); % set random number seed to have consistent noise
 nstd = (nperc/100)*abs(d);                          % noise with a variable standard deviation equal to X% of each data value
 %nstd = (nperc/100)*repmat(mean(abs(d)),ndata,1);   % noise with a constant standard deviation equal to X% of mean data value
@@ -34,9 +39,11 @@ D(1, :) = 0; %D(end, :) = 0;
 
 % regularization
 alphaz = 1;
-alphas = 0.1;
+alphas = 1;
 Wm = alphas*speye(length(m0))+ alphaz*(D'*D);
-lamb = logspace(-2, 7, 1e4);
+
+% choose lambda range
+lamb = logspace(-2, 8, 1e3);
 % lamb = 1e6 ;
 
 % allocate datas
@@ -63,22 +70,14 @@ end
 % disp(['Chi-squared misfit statistic = ',num2str(chi2)]);
 % disp(['lambda = ',num2str(lamb, '%.e')])
 
-% %% evaluating model uncertainties
-% disp('Calculating pseudoinverse of A matrix...');
-% Ainv = pinv(full(A),1e-10);
-% disp('A matrix calculated.');
-% Cm = Ainv;                      % posterior covariance matrix
-% R = Ainv*G'*Wd*G;               % model resolution matrix
-
-toc
-
-figure(1)
-scatter(chi2_tot-ndata, R1D_tot,12, '.')
-title('L-curve')
-axis equal
-xlim padded
-ylim padded
-hold on
+% evaluating model uncertainties
+disp('Calculating pseudoinverse of A matrix...');
+Ainv = pinv(full(A), 1e-10);
+disp('A matrix calculated.');
+Cm = diag(Ainv);                      % posterior covariance matrix
+R = diag(Ainv*G'*Wd*G);               % model resolution matrix
+% R_mat = G'*(G*G')^-1 *G;               % model resolution matrix
+% R = diag(R);
 
 % Lagrange parameter selection
 dchi2 = abs(chi2_tot-ndata);
@@ -97,20 +96,53 @@ true_sigma = [true_sigma(1); true_sigma];
 true_z = [true_z; 20];
 
 figure(1)
-scatter(chi2_tot(ilambda)-ndata, R1D_tot(ilambda), 200, 'x')
-legend('L - curve', 'lambda')
+subplot(2,2,2)
+scatter(chi2_tot-ndata, R1D_tot,12, '.')
+hold on
+scatter(chi2_tot(ilambda)-ndata, R1D_tot(ilambda), 100, 'o')
 hold off
+title('L-curve')
+xlabel('\chi^2 - N')
+ylabel('R1D')
+legend('L - curve', ['lambda ', num2str(lamb(ilambda), '%.e')])
+axis padded
+grid on
 
 % plot
-invers = figure(2);
+% invers = figure(2);
+subplot(2,2,1)
 stairs(m,nz)
 hold on
 stairs(true_sigma, true_z)
 title('Subsurface conductivity model')
-subtitle(['\lambda = ', num2str(lamb(ilambda), '%.e'), ',  \chi^2 = ', num2str(chi2_tot(ilambda))])
+subtitle(['\lambda = ', num2str(lamb(ilambda), '%.e'), ',  \chi^2 = ',...
+    num2str(chi2_tot(ilambda)), ',  p_G(d) = ', num2str(nperc), ' %'])
+xlabel('conductivity \sigma_a [Sm^{-1}]')
+ylabel('depth [m]')
 legend('modeled', 'observed', 'location', 'SouthWest')
-ylim([0 6])
+ylim([-1 6])
 xlim padded
 % set(gca,'XScale','log')
+xticks([0 0.005 0.01 0.015 0.02 0.025 0.03])
 set(gca,'Ydir','reverse')
-saveas(invers, 'inversion.png')
+grid on
+% saveas(invers, 'inversion.png')
+
+subplot(2, 2, 3)
+semilogy(R)
+title('model resolution')
+ylabel('resolution rate')
+xlabel('model parameters L')
+axis padded
+grid on
+
+subplot(2, 2, 4)
+semilogy(Cm)
+title('covariance model')
+ylabel('covariance rate')
+xlabel('model parameters L')
+axis padded
+grid on
+
+disp('code finished : ')
+toc
