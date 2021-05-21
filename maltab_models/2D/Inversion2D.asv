@@ -22,8 +22,8 @@ d = d + noise;
 data(:,1) = d;
 
 % set parameters for the regularization
-% alphax should generally be much bigger than alphaz for layered media
-alphas = .1;  % weight on model smallness relative to reference model (see inversion notes)
+% JI: alphax should generally be much bigger than alphaz for layered media
+alphas = 1;  % weight on model smallness relative to reference model (see inversion notes)
 m0 = 0.02*ones(nx*nz,1); % reference constant conductivity model (not considered if alphas=0)
 alphax = 10; % weight on model smoothness in x-direction
 alphaz = 1;  % weight on model smoothness in z-direction
@@ -36,7 +36,7 @@ Wd = L'*L;
 Wm = alphas*speye(length(m0)) + alphax*(Dx'*Dx) + alphaz*(Dz'*Dz);
 
 % inversion parameters knowing that lambda
-lamb = logspace(3, 7, 1e2); % trade-off parameter
+lamb = logspace(-1, 7, 1e2); % trade-off parameter
 % lamb = 10;
 tol = 1e-10; % tolerance for conjugate gradient solver
 itmax = 500; % maximum # of iterations
@@ -63,7 +63,7 @@ for s = 1:length(lamb)
 end
 
 % Find best lambda index
-b_chi2value = .85;
+b_chi2value = 0.75;
 dchi2 = abs(b_chi2value - chi2_tot);
 ilambda = find(dchi2==min(dchi2));
 lambda = lamb(ilambda);
@@ -87,21 +87,19 @@ R = Ainv*G'*Wd*G;               % model resolution matrix
 dR = reshape(diag(R),nz,nx);
 
 figure()
-plot(chi2_tot, R1D_tot,'o')
+loglog(chi2_tot, R1D_tot,'o')
 hold on
-scatter(chi2_tot(ilambda), R1D_tot(ilambda), 200, 'ro')
-axis equal
-title('L-curve')
-legend('L-curve', ['lambda = ' num2str(lambda, '%.e')])
-xlabel('chi-square \chi^2')
-ylabel('roughness R')
+scatter(chi2_tot(ilambda), R1D_tot(ilambda), 300, '.')
+axis padded
+xlabel('Iteration number')
+ylabel('Relative residual')
 
 figure
 subplot(2,1,1)
 %inv = pcolor(xlog, ztop, m);
-imagesc(xlog,ztop,m);
+pcolor(xlog,ztop,m);
 title('Inverted model')
-subtitle(['\lambda = ', num2str(lambda, '%.e'), ',  P_G(m) = ', num2str(nperc), ' %'])
+subtitle(['\lambda = ', num2str(lambda, '%.e'), ',  P_G(m) = ', num2str(nperc)])
 set(gca, 'YDir','reverse')
 xlabel('Position [m]')
 ylabel('Depth [m]')
@@ -109,14 +107,16 @@ ylim([0 5])
 axis image
 c = colorbar;
 c.Label.String = '\sigma [S/m]';
+shading interp
 
 subplot(2,1,2)
-imagesc(xlog,ztop,log10(dR));
+pcolor(xlog,ztop,log10(dR));
 title('log10(Resolution)');
 xlabel('Position [m]')
 ylabel('Depth [m]')
 axis image
 colorbar
+shading interp
 
 disp('code finished :')
 toc

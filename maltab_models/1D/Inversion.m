@@ -7,15 +7,35 @@
 tic
 clear; close all; clc; tic
 
+disp('Code started')
 % load the dataset
 load data1D
 load TrueModel
 
 % model parameters
 ndata = size(data,1);
-nz = 0:.2:10;
-nlay = length(nz);
+nz = 0:.25:10;
 d = data(:, 1);
+
+% % Creation of the structure in depth
+% nlayer = 16; % Number of layers
+% 
+% % Thicknesses of layers [m]
+% thick = ones(nlayer,1);
+% thick(1) = 0.1;
+% for j=2:nlayer-1
+%     thick(j) = 1.2*thick(j-1);
+% end, clear j
+% thick(end) = 10;
+% 
+% % Depths of layer interfaces [m]
+% nz = zeros(size(thick,1)+1,1);
+% for i = 1:length(thick)
+%     nz(i+1) = nz(i)+thick(i);
+% end
+% nz = nz';
+
+nlay = length(nz);
 
 % add Gaussian noise (JI: I changed this a bit to have some options)
 nperc = 2.5;  % noise level in percent
@@ -39,7 +59,7 @@ D(1, :) = 0; %D(end, :) = 0;
 
 % regularization
 alphaz = 1;
-alphas = 1;
+alphas = .1;
 Wm = alphas*speye(length(m0))+ alphaz*(D'*D);
 
 % choose lambda range
@@ -63,21 +83,12 @@ for s = 1:length(lamb)
     m_tot{s} = m;
 end
 
-% inversion normal
-% [m, G, A] = inversionEM1D(nz, data, lamb, Wm, Wd, m0, 1e-10, 2e2);
-% (chi2<1, fitting data too well; chi2>1, not fitting data enough)
-% chi2 = sum(((G*m-d)./nstd).^2)./length(d);
-% disp(['Chi-squared misfit statistic = ',num2str(chi2)]);
-% disp(['lambda = ',num2str(lamb, '%.e')])
-
 % evaluating model uncertainties
 disp('Calculating pseudoinverse of A matrix...');
 Ainv = pinv(full(A), 1e-10);
 disp('A matrix calculated.');
-Cm = diag(Ainv);                      % posterior covariance matrix
+Cm = Ainv;                            % posterior covariance matrix
 R = diag(Ainv*G'*Wd*G);               % model resolution matrix
-% R_mat = G'*(G*G')^-1 *G;               % model resolution matrix
-% R = diag(R);
 
 % Lagrange parameter selection
 dchi2 = abs(chi2_tot-ndata);
@@ -91,25 +102,17 @@ disp(['optimized chi2 = ' num2str(chi2_tot(ilambda))])
 % call the model with the best lambda
 m = m_tot{ilambda};
 
+% test the inversion by using the forward function
+% with the same parameters
+sigma_a_inv = forwardEM1D(m, nz', data(:,3), data(:,2));
+
 % call and shape true model
 true_sigma = [true_sigma(1); true_sigma];
 true_z = [true_z; 20];
 
-figure(1)
-subplot(2,2,2)
-scatter(chi2_tot-ndata, R1D_tot,12, '.')
-hold on
-scatter(chi2_tot(ilambda)-ndata, R1D_tot(ilambda), 100, 'o')
-hold off
-title('L-curve')
-xlabel('\chi^2 - N')
-ylabel('R1D')
-legend('L - curve', ['lambda ', num2str(lamb(ilambda), '%.e')])
-axis padded
-grid on
+invers = figure(1);
+invers.Position = [100 100 1000 600];
 
-% plot
-% invers = figure(2);
 subplot(2,2,1)
 stairs(m,nz)
 hold on
@@ -117,32 +120,52 @@ stairs(true_sigma, true_z)
 title('Subsurface conductivity model')
 subtitle(['\lambda = ', num2str(lamb(ilambda), '%.e'), ',  \chi^2 = ',...
     num2str(chi2_tot(ilambda)), ',  p_G(d) = ', num2str(nperc), ' %'])
-xlabel('conductivity \sigma_a [Sm^{-1}]')
+xlabel('conductivity \sigma [Sm^{-1}]')
 ylabel('depth [m]')
 legend('modeled', 'observed', 'location', 'SouthWest')
-ylim([-1 6])
-xlim padded
+ylim([-0.1 6])
+xlim([0 0.025])
 % set(gca,'XScale','log')
 xticks([0 0.005 0.01 0.015 0.02 0.025 0.03])
 set(gca,'Ydir','reverse')
 grid on
-% saveas(invers, 'inversion.png')
 
-subplot(2, 2, 3)
-semilogy(R)
-title('model resolution')
-ylabel('resolution rate')
-xlabel('model parameters L')
+subplot(2,2,3)
+plot(sigma_a_inv(:, 1),1:1:ndata, '-o')
+hold on
+plot(data(:, 1),1:1:ndata, '-x')
+% xticks([0 0.005 0.01 0.015 0.02 0.025 0.03])
+title('Apparent conductivity')
+legend('synthetic data', 'inverted data')
+ylabel('N data')
+xlabel('\sigma_a [Sm^{-1}]')
+xlim([0 0.025])
+ylim padded
+grid on
+
+subplot(2,2,2)
+scatter(chi2_tot, R1D_tot,1, '.')
+hold on
+scatter(chi2_tot(ilambda), R1D_tot(ilambda), 100, 'o')
+hold off
+title('L-curve')
+xlabel('\chi^2')
+ylabel('Roughness rate')
+set(gca,'Xscale','log')
+set(gca,'Yscale','log')
+legend('L - curve', ['lambda ', num2str(lamb(ilambda), '%.e')])
 axis padded
 grid on
 
 subplot(2, 2, 4)
-semilogy(Cm)
-title('covariance model')
-ylabel('covariance rate')
-xlabel('model parameters L')
+semilogy(R)
+title('Model resolution')
+ylabel('Resolution rate')
+xlabel('L model parameters')
 axis padded
-grid on
+grid on 
+
+saveas(invers, 'inversion.png')
 
 disp('code finished : ')
 toc
