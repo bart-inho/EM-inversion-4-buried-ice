@@ -18,5 +18,5 @@ function [m, G, A] = inversionEM1D(nz, data, lamb, Wm, Wd, m0, tol, itmax)
     A = G'*Wd*G + lamb*Wm;
     b = G'*Wd*data(:,1) + lamb*Wm*m0;
     % inversion
-    m = cgs(A, b, tol, itmax);
+    m = lsqr(A, b, tol, itmax);
 end
