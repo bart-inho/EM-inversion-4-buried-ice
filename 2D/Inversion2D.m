@@ -14,7 +14,7 @@ nz = length(zdis); % number of discretization layers vertical
 ndata = size(data,1); % number of sigma_a
 
 % add Gaussian noise
-nperc = 2.5;  % noise level in percent
+nperc = 5;  % noise level in percent
 rng(99999); % set random number seed to have consistent noise
 d = data(:,1); % apparent conductivity data
 nstd = (nperc/100)*abs(d);                          % noise with a variable standard deviation equal to X% of each data value
@@ -28,7 +28,7 @@ data(:,1) = d;
 alphas = .1;  % weight on model smallness relative to reference model (see inversion notes)
 m0 = 1/20e3*ones(nx*nz,1); % reference constant conductivity model (not considered if alphas=0)
 alphax = 1; % weight on model smoothness in x-direction
-alphaz = 1;  % weight on model smoothness in z-direction
+alphaz = 10;  % weight on model smoothness in z-direction
 % set reference model
 
 % calculate data and model weighting matrices
@@ -99,6 +99,8 @@ nexttile
 inv = pcolor(xlog, zdis(1:21), m(1:21,:));
 inv.EdgeColor = 'none';
 title('(a)')
+xlabel('[m]')
+ylabel('depth [m]')
 axis image
 caxis([1/500e3 1/20e3])
 cb = colorbar;
@@ -110,6 +112,8 @@ true = pcolor(xlog, zdis(1:21),sigini(1:21,:));
 set(gca, 'YDir','reverse')
 true.EdgeColor = 'none';
 title('(b)')
+xlabel('[m]')
+ylabel('depth [m]')
 axis image
 
 sgtitle(['\lambda = ', num2str(lambda, '%.e'),...
@@ -140,6 +144,9 @@ axis equal
 legend('L-curve', ['lambda = ' num2str(lambda, '%.e')])
 xlabel('\chi^2')
 ylabel('roughness R')
+
+saveas(invers, 'inv-seminoise-2d.eps', 'epsc')
+saveas(invers, 'inv-seminoise-2d.fig')
 
 disp('code finished :')
 toc

@@ -148,7 +148,7 @@ semilogx(R, nz, 'b')
 title('(d)')
 xlabel('Resolution')
 ylabel('Depth [m]')
-% xlim padded
+% axis padded
 xlim([0 1])
 ylim([-0.3 10])
 set(gca,'Ydir','reverse')
@@ -193,8 +193,8 @@ sgtitle(['\lambda = ', num2str(lamb(ilambda), '%.e'), ',  \chi^2 = ',...
     num2str(chi2_tot(ilambda)), ',  p_G(d) = ', num2str(nperc), ' %', ',  \alpha_s = ', num2str(alphas), ',  \alpha_z = ', num2str(alphaz)], 'FontSize', 12)
 
 % save figure
-saveas(invers, 'inv-deep-1d.eps', 'epsc')
-saveas(invers, 'inv-deep-1d.fig')
+saveas(invers, 'inv-arte-1d.eps', 'epsc')
+saveas(invers, 'inv-arte-1d.fig')
 
 disp('code finished : ')
 toc
