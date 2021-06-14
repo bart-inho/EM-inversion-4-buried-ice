@@ -14,7 +14,7 @@ nz = length(zdis); % number of discretization layers vertical
 ndata = size(data,1); % number of sigma_a
 
 % add Gaussian noise
-nperc = 5;  % noise level in percent
+nperc = 2.5;  % noise level in percent
 rng(99999); % set random number seed to have consistent noise
 d = data(:,1); % apparent conductivity data
 nstd = (nperc/100)*abs(d);                          % noise with a variable standard deviation equal to X% of each data value
@@ -145,8 +145,9 @@ legend('L-curve', ['lambda = ' num2str(lambda, '%.e')])
 xlabel('\chi^2')
 ylabel('roughness R')
 
-saveas(invers, 'inv-seminoise-2d.eps', 'epsc')
-saveas(invers, 'inv-seminoise-2d.fig')
+% save figures
+% saveas(invers, 'inv-seminoise-2d.eps', 'epsc')
+% saveas(invers, 'inv-seminoise-2d.fig')
 
 disp('code finished :')
 toc

@@ -105,6 +105,7 @@ v_data = data(data(:,3)==0); % select vertical dipole data
 h_inv_data = data_inv(data_inv(:, 3)==1); % select horizontal predicted data
 v_inv_data = data_inv(data_inv(:, 3) == 0); % select vertical predicted data
 
+fig = 1; % remove it if necessary
 fig = 1+fig;
 invers = figure(fig); clf;
 invers.Position = [100 100 1000 600]; % figure size
@@ -193,8 +194,8 @@ sgtitle(['\lambda = ', num2str(lamb(ilambda), '%.e'), ',  \chi^2 = ',...
     num2str(chi2_tot(ilambda)), ',  p_G(d) = ', num2str(nperc), ' %', ',  \alpha_s = ', num2str(alphas), ',  \alpha_z = ', num2str(alphaz)], 'FontSize', 12)
 
 % save figure
-saveas(invers, 'inv-arte-1d.eps', 'epsc')
-saveas(invers, 'inv-arte-1d.fig')
+% saveas(invers, 'inv-arte-1d.eps', 'epsc')
+% saveas(invers, 'inv-arte-1d.fig')
 
 disp('code finished : ')
 toc
